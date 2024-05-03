@@ -3,6 +3,9 @@
 import { computed, ref } from "vue";
 import type { ComponentSize } from "element-plus";
 
+//导入element-plus消息提示框
+import { ElMessage } from "element-plus";
+
 //空值骨架显示屏
 const isLoad = ref(true);
 
@@ -21,20 +24,26 @@ const start = () => {
   isLoad.value = false;
   getPhone(input.value).then((res) => {
     const result = res.data;
-    // console.log(res);
+    console.log(res);
     // console.log(result);
 
     var response = JSON.parse(result);
 
     // console.log(response.data);
 
-    number_data.value.provice = response.data.province;
-    number_data.value.city = response.data.city;
-    number_data.value.sp = response.data.sp;
+    if (res.data != null) {
+      number_data.value.provice = response.data.province;
+      number_data.value.city = response.data.city;
+      number_data.value.sp = response.data.sp;
+    }
     number_data.value.Notes = res.message;
-
     isLoad.value = true;
   });
+};
+
+//校验规则
+const rules = {
+  input: [],
 };
 </script>
 
