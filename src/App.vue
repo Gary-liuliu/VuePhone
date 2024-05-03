@@ -36,15 +36,21 @@ const start = () => {
       number_data.value.city = response.data.city;
       number_data.value.sp = response.data.sp;
     }
+    if (res.code == 0) {
+      ElMessage.success(res.message ? res.message : "查询成功");
+    } else {
+      ElMessage.error(res.message ? res.message : "查询失败");
+    }
+
     number_data.value.Notes = res.message;
     isLoad.value = true;
   });
 };
 
-//校验规则
-const rules = {
-  input: [],
-};
+const inputRules = [
+  { required: true, message: "请输入手机号" },
+  { pattern: /^[0-9]{3}$|^[0-9]{11}$/, message: "请输入3位或者11位数字" },
+];
 </script>
 
 <template>
@@ -60,6 +66,7 @@ const rules = {
                   v-model="input"
                   style="width: 240px"
                   placeholder="输入手机号"
+                  :rules="inputRules"
                 />
               </span></div
           ></el-col>
