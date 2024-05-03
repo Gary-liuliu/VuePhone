@@ -19,7 +19,7 @@ const number_data = ref({
 });
 
 //开始搜索
-import { getPhone } from "./api/start";
+import { getPhone, getPhoneList } from "./api/start";
 const start = () => {
   isLoad.value = false;
   getPhone(input.value).then((res) => {
@@ -44,13 +44,24 @@ const start = () => {
 
     number_data.value.Notes = res.message;
     isLoad.value = true;
+    phoneHistoryList();
   });
 };
-
+//定义规则
 const inputRules = [
   { required: true, message: "请输入手机号" },
   { pattern: /^[0-9]{3}$|^[0-9]{11}$/, message: "请输入3位或者11位数字" },
 ];
+
+//历史记录
+const history = ref([]);
+
+const phoneHistoryList = async () => {
+  let phoneList = await getPhoneList();
+  history.value = phoneList.data;
+  console.log(history.value);
+};
+phoneHistoryList();
 </script>
 
 <template>
@@ -105,6 +116,20 @@ const inputRules = [
           </el-descriptions-item>
         </el-descriptions>
         <el-skeleton v-if="!isLoad" :rows="5" animated />
+        <el-descriptions
+          title="历史记录"
+          direction="vertical"
+          :column="4"
+          border
+        ></el-descriptions>
+        <el-table :data="history" style="width: 100%">
+          <el-table-column label="省份" prop="province"></el-table-column>
+          <el-table-column label="城市" prop="city"></el-table-column>
+          <el-table-column label="供应商" prop="sp"></el-table-column>
+          <!-- <template #empty>
+            <el-empty description="没有数据" />
+          </template> -->
+        </el-table>
       </el-main>
     </el-container>
   </div>
