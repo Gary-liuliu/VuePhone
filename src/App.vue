@@ -1,7 +1,5 @@
-
-<script setup lang="ts">
+<script setup>
 import { computed, ref } from "vue";
-import type { ComponentSize } from "element-plus";
 
 //导入element-plus消息提示框
 import { ElMessage } from "element-plus";
@@ -55,11 +53,17 @@ const inputRules = [
 
 //历史记录
 const history = ref([]);
+const historyData = ref([]);
 
 const phoneHistoryList = async () => {
   let phoneList = await getPhoneList();
   history.value = phoneList.data;
   console.log(history.value);
+
+  // 提取每个对象中的data字段的值，并存入historyData
+  historyData.value = history.value.map((item) => JSON.parse(item.data).data);
+
+  console.log(historyData.value);
 };
 phoneHistoryList();
 </script>
@@ -123,12 +127,28 @@ phoneHistoryList();
           border
         ></el-descriptions>
         <el-table :data="history" style="width: 100%">
-          <el-table-column label="省份" prop="province"></el-table-column>
-          <el-table-column label="城市" prop="city"></el-table-column>
-          <el-table-column label="供应商" prop="sp"></el-table-column>
-          <!-- <template #empty>
+          <el-table-column
+            label="查找记录"
+            prop="phoneNumber"
+          ></el-table-column>
+          <el-table-column label="省份">
+            <template v-slot:default="scope">
+              {{ historyData[scope.$index].province }}
+            </template>
+          </el-table-column>
+          <el-table-column label="城市">
+            <template v-slot:default="scope">
+              {{ historyData[scope.$index].city }}
+            </template>
+          </el-table-column>
+          <el-table-column label="供应商">
+            <template v-slot:default="scope">
+              {{ historyData[scope.$index].sp }}
+            </template>
+          </el-table-column>
+          <template #empty>
             <el-empty description="没有数据" />
-          </template> -->
+          </template>
         </el-table>
       </el-main>
     </el-container>
